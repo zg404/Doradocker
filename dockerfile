@@ -37,5 +37,9 @@ RUN mamba create -n NGSID && \
     pip install git+https://github.com/ksahlin/NGSpeciesID.git  \
     mamba deactivate
 
+RUN curl https://raw.githubusercontent.com/calacademy-research/minibar/master/minibar.py && \
+    chmod 775 minibar.py
+
+
 # Set up development environment within the container
 WORKDIR /ONT_data
