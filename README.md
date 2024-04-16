@@ -13,8 +13,10 @@ or download and extract a zip of the repo:
 `docker build -t doradocker .`  
 4. Run an instance (container) of the image. On this first run, must specify to use all GPUs for CUDA access.  
 `docker run -it --gpus all --name doradocker-live doradocker`  
-When done, use `exit` command to quit the Docker container  
+When finished, use `exit` command to quit the Docker container  
 5. To re-open the Docker container, first start the container, then open an interactive shell  
 `docker start doradocker-live`  
 `docker exec -it doradocker-live /bin/bash`  
+When finished, use `exit` command to exit the container's shell. Then stop the container:  
+`docker stop doradocker-live`
 
