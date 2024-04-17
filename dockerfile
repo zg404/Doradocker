@@ -61,3 +61,7 @@ ENV PATH="${PATH}:/miniconda3/envs/dorado/bin/bin"
 
 
 # Set up working directories within the container, copy necessary scripts and supporting files
+RUN mkdir /data /scripts
+COPY scripts/* /scripts/
+RUN chmod 775 /scripts/*
+WORKDIR /data
