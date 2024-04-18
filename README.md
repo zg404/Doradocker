@@ -11,12 +11,7 @@ or download and extract a zip of the repo:
 `wget https://github.com/zg404/Doradocker/archive/refs/heads/main.zip`  
 3. Open a terminal in the git folder and build the docker image using the dockerfile. This may take several minutes. Progress can be monitored in the terminal.    
 `docker build -t doradocker .`  
-4. Create a folder on the host (main) OS that contains your raw ONT data, in fast5/pod5 format, along with the Index.txt and Primer.txt file for demux
-5. Run an instance (container) of the image. On this first run, must specify to use all GPUs for CUDA access. Change the bind mount (-v) to the data folder from previous step
-`docker run -it --gpus all -v ~/Desktop/data:/data -rm --name doradocker-live doradocker`  
-When finished, use `exit` command to quit the Docker container  
-6. This will start a bash terminal in a transient container. The container, and all other files outside of the data folder, will be removed when finished. Rerun the command to create a new instance on-demand.
-7. Follow the Doradocker_Run_Commands doc for the complete pipeline instructions
+4. The docker image should now be ready to use in creating on-demand containers for processing data. Follow the [Doradocker_Run_Commands](https://github.com/zg404/Doradocker/blob/main/Doradocker_Run_Commands.md) doc for the complete pipeline instructions and ready-to-use commands. 
 
 
 ## To Do:

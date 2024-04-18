@@ -4,21 +4,27 @@ In most cases, the commands can be copied directly into the Docker container ter
 ##### Author: Z. Geurin | Version 0.1, 2024-04-15
 
 ## File and Folder Preparation
-* Prepare working directory with raw data and accessory files
+* Prepare working directory with raw data and sample sheet index file:
+  * **Raw ONT reads** in fast5/pod5 format, in a **folder labeled `fast5/` or `pod5s/`**
+  * **Index.txt** sample sheet serving as the key to sample:index combinations
+* This folder will be mounted to Docker container without having to migrate data in or out of the container. The default mount point is `/data/` in the root directory.
+* **NOTE**: any files/data outside of the `/data/` folder within the container will be wiped after closing the container. By default, the container terminal starts in the `/data/` folder, and all following pipeline operations take place within this folder. Files can be monitored in real time on the host system (outside the container) as the workflow progresses.
+
+
 
 ## Docker Initialization
-* Build docker image (if not already performed)
-```
-docker build -t doradocker .
-```
-* Create new transient instance (MAIN RUN COMMAND TO START THE CONTAINER; START HERE WHEN PROCESSING NEW DATA)
-* NOTE: the "--rm" param removes this instance when finished. This is easier than restarting old instances and prevents clutter
+* Create new transient container by using the `docker run` command each time you wish to process run data.
+* Change the folder pathway (`~/Desktop/data`) in the `-v` parameter to match your prepared folder on the host filesystem. Do not change the `:data` part of the parameter.
+* **NOTE**: the `--rm` argument removes this container instance when finished. This is easier than restarting old instances and prevents clutter from building up.
 ```
 docker run -it --gpus all -v ~/Desktop/data:/data --rm --name doradocker-live doradocker
 ```
+This will start an interactive bash terminal in a new container instance of the Doradocker image. When finished, use `exit` command to quit the Docker container.  
 
-# Dorado Basecalling
-* Verify GPU and CUDA driver is detected
+**Reminder again**: the container, and all other files outside of the `/data/` folder, will be removed when finished. If for some reason you perform additional work outside of the data folder, copy the files into the `/data/` folder before exiting the container. You can quickly check the folder on the host system to ensure you have all data needed before exiting.
+
+## Dorado Basecalling
+* Verify GPU and CUDA driver are detected. Command should output a table with the CUDA driver stated in the top-right, and your GPU model listed.
 ```
 nvidia-smi
 ```
@@ -37,13 +43,13 @@ dorado duplex sup ./pod5s > bamcalls.bam
 ```
 
 ### Run Summary QC 
-* Generate summary file; should be compatible with QC tools that use Guppy summary file
+* Generate run summary file; compatible with QC tools that use traditional Guppy summary file
 ```
 dorado summary bamcalls.bam > dorado_raw_QC.txt
 conda deactivate
 ```
 
-### Samtools Read Handling
+## Samtools Read Handling
 * Split out for duplex and simplex reads, respectively
 ```
 conda activate samtools
@@ -67,7 +73,7 @@ samtools fastq -T dx combinedcalls.short.bam > combinedcalls.fastq
 conda deactivate
 ```
 
-### Porechop Read Trimming
+## Porechop Read Trimming
 * Trim ONT adapters using Porechop
 ```
 conda activate porechop
@@ -75,8 +81,8 @@ porechop --discard_middle -i combinedcalls.fastq -o combinedcalls.clean.fastq
 conda deactivate
 ```
 
-### QC Reports
-* Perform qc plots with pycoQC
+## QC Reports
+* Perform qc plots with pycoQC. PycoQC outputs a single html file with interactive figures for the run summary info.
 ```
 conda activate pycoqc
 dorado summary combinedcalls.short.bam > dorado_clean_QC.txt
@@ -84,7 +90,7 @@ pycoQC -f dorado_clean_QC.txt -o QCreport.html
 conda deactivate
 ```
 
-### Minibar Demultiplexing
+## Minibar Demultiplexing
 * Move the prepared NGSpeciesID folder into the working directory
 * Move/copy the combinedcalls.clean.fastq and Index.txt files to the NGSpeciesID folder
 ```
@@ -98,7 +104,7 @@ rm sample_unk.fastq
 mv sample_Multiple_Matches.fastq sample_Multiple_Matches.fq
 ```
 
-### NGSpeciesID Consensus Sequence Generation
+## NGSpeciesID Consensus Sequence Generation
 ```
 conda activate NGSpeciesID
 for file in *.fastq; do
