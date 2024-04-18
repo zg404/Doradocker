@@ -11,8 +11,8 @@ def update_fasta_file(file, parent_folder):
     with open(file, 'r') as f:
         lines = f.readlines()
     first_line = lines.pop(0)
-    length = re.search(r'total_supporting_reads_\d+:\d\.\d-(\d+)\.\d', first_line).group(1)
-    reads = re.search(r'total_supporting_reads_(\d+):\d\.\d-\d+\.\d', first_line).group(1)
+    length = re.search(r'total_supporting_reads_(\d)', first_line).group(1)
+    reads = re.search(r'total_supporting_reads_(\d)', first_line).group(1)
     lines.insert(0, '>' + parent_folder + '\n')
     with open(file, 'w') as f:
         [f.write(line) for line in lines]
@@ -22,7 +22,7 @@ def update_fasta_file(file, parent_folder):
 def get_fasta_reads(fasta_file):
     with open(fasta_file, 'r') as f:
         first_line = f.readline()
-        reads = re.search(r'total_supporting_reads_(\d+):\d\.\d-\d+\.\d', first_line).group(1)
+        reads = re.search(r'total_supporting_reads_(\d)', first_line).group(1)
     return reads
 
 def process_medaka_folder(folder, medaka_id):
