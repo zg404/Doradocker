@@ -1,5 +1,5 @@
 # Doradocker
-Docker image for Fungal ITS Barcoding via Oxford Nanopore sequencing, Dorado basecaller, demultiplex by Minibar, and read consensus generation by NGSpeciesID.
+Docker image for Fungal ITS Barcoding via Oxford Nanopore sequencing, [Dorado basecaller](https://github.com/nanoporetech/dorado), demultiplex by [Minibar](https://github.com/calacademy-research/minibar), and read consensus generation by [NGSpeciesID](https://github.com/ksahlin/NGSpeciesID/).
 
 ## Installation
 Follow these basic steps. More in depth instructions coming soon.
