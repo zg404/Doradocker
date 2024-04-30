@@ -15,12 +15,12 @@ def update_fasta_file(file, parent_folder):
     with open(file, 'r') as f:
         lines = f.readlines()
     first_line = lines.pop(0)
-    # length = re.search(r'total_supporting_reads_(\d)', first_line).group(1)
+    length = len(lines[0].rstrip())
     reads = re.search(r'total_supporting_reads_(\d+)', first_line).group(1)
     lines.insert(0, '>' + parent_folder + '\n')
     with open(file, 'w') as f:
         [f.write(line) for line in lines]
-    return reads
+    return length, reads
 
 def get_fasta_reads(fasta_file):
     with open(fasta_file, 'r') as f:
@@ -39,7 +39,7 @@ def process_medaka_folder(folder, medaka_id):
         target_fasta_file = os.path.join(summary_folder, f'{parent_folder_name}-{medaka_id}-RiC{reads}.fasta')
         # shutil.move(fasta_file, target_fasta_file) # TODO
         shutil.copy(fasta_file, target_fasta_file)
-        reads = update_fasta_file(target_fasta_file, f'{parent_folder_name}-{medaka_id}')
+        length, reads = update_fasta_file(target_fasta_file, f'{parent_folder_name}-{medaka_id}')
 
     p = Path(folder)
     medaka_parent_folder = str(p.parent)
@@ -51,7 +51,7 @@ def process_medaka_folder(folder, medaka_id):
             shutil.copy(fastq_file, target_fastq_file)
             fastq_file_index += 1
 
-    return f'{parent_folder_name}-{medaka_id}', reads
+    return f'{parent_folder_name}-{medaka_id}', length, reads
 
 def process_folder(folder):
     medaka_id = 1
@@ -61,8 +61,8 @@ def process_folder(folder):
             p = Path(item)
             folder_name = p.name
             if folder_name.startswith('medaka'):
-                filename, reads = process_medaka_folder(item, medaka_id)
-                stats.append([filename, reads, medaka_id])
+                filename, length, reads = process_medaka_folder(item, medaka_id)
+                stats.append([filename, length, reads, medaka_id])
                 medaka_id += 1
 
     return stats
@@ -117,7 +117,7 @@ if not os.path.exists(os.path.join(summary_folder, 'FASTQ Files')):
 
 with open(os.path.join(summary_folder, 'summary.txt'), 'w', encoding='utf-8') as f_out:
     writer = csv.writer(f_out, delimiter='\t', lineterminator='\n')
-    writer.writerow(['Filename', 'Reads in Consensus', 'Multiple'])
+    writer.writerow(['Filename', 'Length', 'Reads in Consensus', 'Multiple'])
 
     stats = []
     for item in sorted(glob.iglob(source_folder + '/*', recursive=False)):
