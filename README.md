@@ -16,9 +16,7 @@ or download and extract a zip of the repo:
 
 ## To Do:
 1. Maybe break up dockerfile for better caching
-2. Add support for Singularity?  
-  `singularity build [IMAGE NAME].sif docker-daemon://[IMAGE NAME]:latest`
-3. Create alternative image for CUDA-less systems? Could base on miniconda image.
-4. Set up as non-root user?
-5. Reduce docker image file size. Add anything dockerignore?
-6. Incorporate cleanup commands for intermediate files (bam and fastq)
+2. Create alternative image for CUDA-less systems? Could base on miniconda image.
+3. Reduce docker image file size.
+4. Incorporate cleanup commands for intermediate files (bam and fastq)
+5. Implement workflow scripting (snakemake)
