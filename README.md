@@ -15,8 +15,9 @@ or download and extract a zip of the repo:
 
 
 ## To Do:
-1. Maybe break up dockerfile for better caching
-2. Create alternative image for CUDA-less systems? Could base on miniconda image.
-3. Reduce docker image file size.
-4. Incorporate cleanup commands for intermediate files (bam and fastq)
-5. Implement workflow scripting (snakemake)
+1. Complete the prep files needed for workflow (eg, Index.txt generation)
+2. Maybe break up dockerfile for better caching
+3. Create alternative image for CUDA-less systems? Could base on miniconda image.
+4. Reduce docker image file size.
+5. Incorporate cleanup commands for intermediate files (bam and fastq)
+6. Implement workflow scripting (snakemake)
