@@ -60,10 +60,10 @@ RUN wget https://raw.githubusercontent.com/calacademy-research/minibar/master/mi
 # Install Dorado from GitHub
 RUN conda create -n dorado && \
     conda run -n dorado pip install pod5 && \
-    wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.6.0-linux-x64.tar.gz && \
-    tar -xvf dorado-0.6.0-linux-x64.tar.gz && \
-    rm dorado-0.6.0-linux-x64.tar.gz && \
-    mv dorado-0.6.0-linux-x64 /miniconda3/envs/dorado/bin/
+    wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.7.1-linux-x64.tar.gz && \
+    tar -xvf dorado-0.7.1-linux-x64.tar.gz && \
+    rm dorado-0.7.1-linux-x64.tar.gz && \
+    mv dorado-0.7.1-linux-x64 /miniconda3/envs/dorado/bin/
 
 # Add dorado location to PATH
 # for some reason, mv and cp only move the subcontents (the bin and lib subfolders) to /miniconda3/envs/dorado/bin/
