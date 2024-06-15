@@ -28,7 +28,7 @@ This will start an interactive bash terminal in a new container instance of the 
 ```
 nvidia-smi
 ```
-
+Dorado takes Pod5 input instead of the legacy Fast5 format. While it's easy to convert from Fast5 to Pod5, it's best to output Pod5 directly from MinKnow.
 * Convert Fast5 to Pod5 (if necessary)
 ```
 conda activate dorado
@@ -37,27 +37,36 @@ conda deactivate
 ```
 
 * Basecall in duplex mode, super accurate model
+* Duplex basecalling forces adapter trimming as part of the algorithm.
+* The resulting bam file contains reads that are tagged with their origin (ie, simplex vs duplex)
 ```
 conda activate dorado
 dorado duplex sup ./pod5s > bamcalls.bam
 ```
 
-### Run Summary QC 
+### ONT Run Summary QC 
 * Generate run summary file; compatible with QC tools that use traditional Guppy summary file
 ```
 dorado summary bamcalls.bam > dorado_raw_QC.txt
 conda deactivate
 ```
+* Perform qc plots with pycoQC. PycoQC outputs a single html file with interactive figures for the run summary info.
+```
+conda activate pycoqc
+pycoQC -f dorado_raw_QC.txt -o QCreport.html
+conda deactivate
+```
 
-## Samtools Read Handling
-* Split out for duplex and simplex reads, respectively
+## Samtools Read Processing
+* By default, the duplex reads also output a duplicate simplex read in the dataset, tagged with "dx:-1".
+* Split out duplex "dx:1" and simplex "dx:0" reads, leaving out the duplicate "dx:-1" reads
 ```
 conda activate samtools
 samtools view -d dx:1 -o ./bamcalls.duplex.bam ./bamcalls.bam
 samtools view -d dx:0 -o ./bamcalls.simplex.bam ./bamcalls.bam
 ```
 
-* Merge back into a single bam file, leaving behind the redundant duplex reads
+* Merge duplex and simplex back into a single bam file
 ```
 samtools merge -o combinedcalls.bam ./bamcalls.simplex.bam ./bamcalls.duplex.bam
 ```
@@ -77,44 +86,38 @@ conda deactivate
 * Trim ONT adapters using Porechop
 ```
 conda activate porechop
-porechop --discard_middle -i combinedcalls.fastq -o combinedcalls.clean.fastq
-conda deactivate
-```
-
-## QC Reports
-* Perform qc plots with pycoQC. PycoQC outputs a single html file with interactive figures for the run summary info.
-```
-conda activate pycoqc
-dorado summary combinedcalls.short.bam > dorado_clean_QC.txt
-pycoQC -f dorado_clean_QC.txt -o QCreport.html
+porechop -i combinedcalls.fastq -o combinedcalls.chopped.fastq
 conda deactivate
 ```
 
 ## Minibar Demultiplexing
 * Move the prepared NGSpeciesID folder into the working directory
-* Move/copy the combinedcalls.clean.fastq and Index.txt files to the NGSpeciesID folder
+* Move/copy the combinedcalls.chopped.fastq and Index.txt files to the NGSpeciesID folder
 ```
 mv /NGSpeciesID/ .
 cp ./Index.txt ./NGSpeciesID/
-cp combinedcalls.clean.fastq ./NGSpeciesID/
+cp combinedcalls.chopped.fastq ./NGSpeciesID/
 cd ./NGSpeciesID
-python3 ./minibar.py -F Index.txt combinedcalls.clean.fastq
-rm combinedcalls.clean.fastq
+python3 ./minibar.py -F Index.txt combinedcalls.chopped.fastq
+rm combinedcalls.chopped.fastq
 rm sample_unk.fastq
 mv sample_Multiple_Matches.fastq sample_Multiple_Matches.fq
 ```
 
 ## NGSpeciesID Consensus Sequence Generation
+* Run NGSpeciesID in a loop on all fastq files (output by minibar) in the working directory
+* Be sure to change the thread count based on your CPU (--t 12)
 ```
 conda activate NGSpeciesID
 for file in *.fastq; do
 bn=`basename $file .fastq`
-NGSpeciesID --ont --consensus --sample_size 500 --m 730 --s 400 --medaka --primer_file primers.txt --fastq $file --outfolder ${bn}
+NGSpeciesID --ont --consensus --t 12 --sample_size 500 --m 730 --s 400 --medaka --primer_file primers.txt --fastq $file --outfolder ${bn}
 done
 conda deactivate
 ```
 
 ### Summarize Script
+* Run a script to prepare the summary folder for upload to MycoMap
 ```
 python summarize.py .
 ```
