@@ -1,7 +1,7 @@
 # Doradocker Run Commands
 Follow these commands for the complete pipeline; including Dorado Basecalling, read clean up, Minibar demultiplex, and NGSpeciesID consensus
 In most cases, the commands can be copied directly into the Docker container terminal
-##### Author: Z. Geurin | Version 0.1, 2024-04-15
+##### Author: Z. Geurin | Version 0.2, 2024-06-20
 
 ## File and Folder Preparation
 * Prepare working directory with raw data and sample sheet index file:
@@ -37,23 +37,11 @@ conda deactivate
 ```
 
 * Basecall in duplex mode, super accurate model
-* Duplex basecalling forces adapter trimming as part of the algorithm.
+* Duplex basecalling forces adapter trimming as part of the algorithm for the duplex reads. Simplex reads are untrimmed.
 * The resulting bam file contains reads that are tagged with their origin (ie, simplex vs duplex)
 ```
 conda activate dorado
 dorado duplex sup ./pod5s > bamcalls.bam
-```
-
-### ONT Run Summary QC 
-* Generate run summary file; compatible with QC tools that use traditional Guppy summary file
-```
-dorado summary bamcalls.bam > dorado_raw_QC.txt
-conda deactivate
-```
-* Perform qc plots with pycoQC. PycoQC outputs a single html file with interactive figures for the run summary info.
-```
-conda activate pycoqc
-pycoQC -f dorado_raw_QC.txt -o QCreport.html
 conda deactivate
 ```
 
@@ -85,8 +73,18 @@ conda deactivate
 ## Porechop Read Trimming
 * Trim ONT adapters using Porechop
 ```
-conda activate porechop
-porechop -i combinedcalls.fastq -o combinedcalls.chopped.fastq
+conda activate porechop2
+porechop_abi --discard_middle --discard_database --custom_adapters /NGSpeciesID/ONT_v14_Adapters.txt -i combinedcalls.fastq -o combinedcalls.chopped.fastq
+conda deactivate
+```
+
+### ONT Sequence QC Analysis
+
+* Perform QC analysis with Sequali. Outputs an html file with figures for the sequance quality, adapter content, etc.
+```
+conda activate sequali
+sequali bamcalls.bam
+sequali combinedcalls.chopped.fastq
 conda deactivate
 ```
 
