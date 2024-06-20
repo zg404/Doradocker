@@ -14,8 +14,8 @@ In most cases, the commands can be copied directly into the Docker container ter
 
 ## Docker Initialization
 * Create new transient container by using the `docker run` command each time you wish to process run data.
-* Change the folder pathway (`~/Desktop/data`) in the `-v` parameter to match your prepared folder on the host filesystem. Do not change the `:data` part of the parameter.
-* **NOTE**: the `--rm` argument removes this container instance when finished. This is easier than restarting old instances and prevents clutter from building up.
+* Change the folder pathway (`~/Desktop/data`) in the `-v` parameter to match your prepared folder on the host filesystem. Do not change the `:data` part of the parameter.  
+**NOTE**: the `--rm` argument removes this container instance when finished. This is easier than restarting old instances and prevents clutter from building up.
 ```
 docker run -it --gpus all -v ~/Desktop/data:/data --rm --name doradocker-live doradocker
 ```
@@ -28,7 +28,7 @@ This will start an interactive bash terminal in a new container instance of the 
 ```
 nvidia-smi
 ```
-Dorado takes Pod5 input instead of the legacy Fast5 format. While it's easy to convert from Fast5 to Pod5, it's best to output Pod5 directly from MinKnow.
+**NOTE:** Dorado takes Pod5 input instead of the legacy Fast5 format. While it's easy to convert from Fast5 to Pod5, it's best to output Pod5 directly from MinKnow.
 * Convert Fast5 to Pod5 (if necessary)
 ```
 conda activate dorado
@@ -36,18 +36,18 @@ pod5 convert fast5 ./fast5/*.fast5 --output ./pod5s/ --one-to-one ./fast5
 conda deactivate
 ```
 
-* Basecall in duplex mode, super accurate model
-* Duplex basecalling forces adapter trimming as part of the algorithm for the duplex reads. Simplex reads are untrimmed.
-* The resulting bam file contains reads that are tagged with their origin (ie, simplex vs duplex)
+* Perform basecalling in duplex mode with the super accurate model (sup)
 ```
 conda activate dorado
 dorado duplex sup ./pod5s > bamcalls.bam
 conda deactivate
 ```
+Duplex basecalling forces adapter trimming as part of the algorithm for the duplex reads. **Simplex reads remain untrimmed**.  
+The resulting bam file contains reads that are tagged with their origin (ie, simplex = "dx:0", duplex = "dx:1")
 
 ## Samtools Read Processing
-* By default, the duplex reads also output a duplicate simplex read in the dataset, tagged with "dx:-1".
-* Split out duplex "dx:1" and simplex "dx:0" reads, leaving out the duplicate "dx:-1" reads
+By default, the duplex reads also output a duplicate simplex read in the dataset, tagged with "dx:-1".
+* Split out duplex "dx:1" and simplex "dx:0" reads, leaving behind the duplicate "dx:-1" reads
 ```
 conda activate samtools
 samtools view -d dx:1 -o ./bamcalls.duplex.bam ./bamcalls.bam
