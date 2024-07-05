@@ -1,0 +1,6 @@
+FAST5: FALSE
+INPUT_DIR: "/data/"
+SAMPLE_INDEX: "Index.txt"
+PRIMERS: "Primers.txt"
+ADAPTERS: "ONT_V14_Adapters.txt"
+THREADS: 12
