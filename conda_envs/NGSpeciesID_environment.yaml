@@ -1,11 +1,11 @@
 name: NGSpeciesID
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - defaults
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_gnu
-  - absl-py=2.1.0=pyhd8ed1ab_0
   - aiohttp=3.9.3=py310h2372a71_1
   - aiosignal=1.3.1=pyhd8ed1ab_0
   - astunparse=1.6.3=pyhd8ed1ab_0
@@ -21,7 +21,6 @@ dependencies:
   - cached_property=1.5.2=pyha770c72_1
   - cachetools=5.3.3=pyhd8ed1ab_0
   - certifi=2024.2.2=pyhd8ed1ab_0
-  - cffi=1.16.0=py310h2fee648_0
   - charset-normalizer=3.3.2=pyhd8ed1ab_0
   - click=8.1.7=unix_pyh707e725_0
   - cryptography=39.0.0=py310h65dfdc0_0
@@ -83,7 +82,6 @@ dependencies:
   - minimap2=2.28=he4a0461_0
   - multidict=6.0.5=py310h2372a71_0
   - ncurses=6.4.20240210=h59595ed_0
-  - numpy=1.26.4=py310hb13e2d6_0
   - oauthlib=3.2.2=pyhd8ed1ab_0
   - ont-fast5-api=4.1.3=pyhdfd78af_0
   - openblas=0.3.27=pthreads_h7a3da1a_0
@@ -144,8 +142,12 @@ dependencies:
   - zlib=1.2.13=hd590300_5
   - zstd=1.5.5=hfc55251_0
   - pip:
+      - absl-py==1.4.0
       - biopython==1.83
+      - cffi==1.15.0
       - cython==3.0.10
+      - more-itertools==10.3.0
       - ngspeciesid==0.3.0
+      - numpy==1.23.0
       - parasail==1.2.4
-prefix: /miniconda3/envs/NGSpeciesID
+      - pyparsing==2.3.1
