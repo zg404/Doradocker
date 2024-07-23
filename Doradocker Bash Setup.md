@@ -41,7 +41,7 @@ cp /doradocker/conda_envs/ ~/conda_envs/
 wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" && \
     bash Miniforge3-$(uname)-$(uname -m).sh -b -p ~/miniconda3/ && \
     rm Miniforge3-$(uname)-$(uname -m).sh
-echo export PATH="${PATH}:/miniconda3/bin"
+echo export PATH="${PATH}:~/miniconda3/bin"
 conda config --add channels bioconda && \
     conda update -n base conda && \
     conda config --set auto_activate_base false && \
