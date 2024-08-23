@@ -74,7 +74,7 @@ conda deactivate
 * Trim ONT adapters using Porechop
 ```
 conda activate porechop2
-porechop_abi --discard_middle --discard_database --custom_adapters /NGSpeciesID/ONT_v14_Adapters.txt -i combinedcalls.fastq -o combinedcalls.chopped.fastq
+porechop_abi --discard_middle --discard_database --custom_adapters /NGSpeciesID/ONT_V14_Adapters.txt -i combinedcalls.fastq -o combinedcalls.chopped.fastq
 conda deactivate
 ```
 
