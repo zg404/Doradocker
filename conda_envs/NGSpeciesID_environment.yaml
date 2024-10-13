@@ -142,12 +142,12 @@ dependencies:
   - zlib=1.2.13=hd590300_5
   - zstd=1.5.5=hfc55251_0
   - pip:
+      - "git+https://github.com/ksahlin/NGSpeciesID.git@master"
       - absl-py==1.4.0
       - biopython==1.83
       - cffi==1.15.0
       - cython==3.0.10
       - more-itertools==10.3.0
-      - ngspeciesid==0.3.0
       - numpy==1.23.0
       - parasail==1.2.4
       - pyparsing==2.3.1
